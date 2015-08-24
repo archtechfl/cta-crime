@@ -1,0 +1,21 @@
+<div class="container intro">
+	<h1>CTA Crime Analysis using SODA API</h1>
+	<table class="table table-bordered table-striped table-hover">
+		<tbody>
+			<tr>
+				<th>Date</th>
+				<th>Block</th>
+				<th>Type</th>
+				<th>Location</th>
+			</tr>
+			<% @data.each do |crime| %>
+				<tr>
+					<td><%= crime['date'] %></td>
+					<td><%= crime['block'] %></td>
+					<td><%= crime['primary_type'] %></td>
+					<td><%= crime['location_description'] %></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</div>
