@@ -3,9 +3,24 @@
 	<table class="table table-bordered table-striped table-hover">
 		<tbody>
 			<tr>
+				<th>Crime Type</th>
+				<th>Count</th>
+			</tr>
+			<% @tally.each do |crime_count| %>
+				<tr>
+					<td><%= crime_count['type'] %></td>
+					<td><%= crime_count['count'] %></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+	<table class="table table-bordered table-striped table-hover">
+		<tbody>
+			<tr>
 				<th>Date</th>
 				<th>Block</th>
 				<th>Type</th>
+				<th>Detail</th>
 				<th>Location</th>
 			</tr>
 			<% @data.each do |crime| %>
@@ -13,6 +28,7 @@
 					<td><%= crime['date'] %></td>
 					<td><%= crime['block'] %></td>
 					<td><%= crime['primary_type'] %></td>
+					<td><%= crime['description'] %></td>
 					<td><%= crime['location_description'] %></td>
 				</tr>
 			<% end %>
