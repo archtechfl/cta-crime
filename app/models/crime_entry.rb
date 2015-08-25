@@ -29,4 +29,8 @@ class CrimeEntry < ActiveRecord::Base
         return public_crimes
     end
 
+    def self.tally_crimes_by_type(dataset)
+    	# Tally the crimes according to type
+    end
+
 end
