@@ -6,7 +6,8 @@ class CrimeEntry < ActiveRecord::Base
         client = SODA::Client.new({:domain => 'data.cityofchicago.org', :app_token => Rails.application.secrets.soda_app_token})
         response = client.get("qnmj-8ku6", {"$limit" => 10000, "$q" => "CTA"})
         crimes_filtered = CrimeEntry.filter_cta_entries(response)
-        return crimes_filtered
+        sorted_filtered_crimes = crimes_filtered.sort! { |x,y| x["date"] <=> y["date"] }
+        return sorted_filtered_crimes
     end
 
     def self.getCrimeResults()
