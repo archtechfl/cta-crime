@@ -3,7 +3,7 @@ class CtaCrimeController < ApplicationController
   	end
 
   	def tally
-  		@tally = CrimeEntry.get_tally()
+  		@tally = CrimeEntry.get_tally_breakdown()
   		respond_to do |format|
   			format.html #index
   			# return either XML or JSON if receiving an AJAX request
