@@ -30,11 +30,18 @@ function CrimeAPI () {
 	var displayChart = function (dataBeforeGraph) {
 		var primaryTypes = dataBeforeGraph["children"];
 		// Go through each primary type and add up the sub-type counts
+		var dataRenderArray = [];
 		_.each(primaryTypes, function (item, index) {
-			_.each(item, function (subitem, subindex) {
-				console.log(subitem);
+			var primaryTypeSum = 0;
+			var primaryTypeSumObject = {};
+			_.each(item["children"], function (subitem, subindex) {
+				primaryTypeSum += subitem["count"]
 			});
+			primaryTypeSumObject["name"] = subindex;
+			primaryTypeSumObject["count"] = primaryTypeSum;
+			dataRenderArray.push(primaryTypeSumObject);
 		});
+		console.log(dataRenderArray);
 	};
 	// render the
 	var renderChart = function (root) {
