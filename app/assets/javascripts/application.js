@@ -15,7 +15,7 @@
 //= require twitter/bootstrap
 //= require turbolinks
 //= require underscore
-//= require d3.min
+//= require d3
 //= require crimeAPI
 //= require application_init
 //= require_tree .

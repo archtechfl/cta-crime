@@ -35,7 +35,7 @@ CrimeAPI.prototype.getTally = function() {
 		// console.log(root);
 
 	    var width = 960,
-		    height = 700,
+		    height = 840,
 		    radius = Math.min(width, height) / 2;
 
 		var x = d3.scale.linear()
@@ -44,13 +44,13 @@ CrimeAPI.prototype.getTally = function() {
 		var y = d3.scale.sqrt()
 		    .range([0, radius]);
 
-		var color = d3.scale.category20c();
+		var color = d3.scale.category20();
 
 		var svg = d3.select(".svg-container").append("svg")
 		    .attr("width", width)
 		    .attr("height", height)
 		  .append("g")
-		    .attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");
+		    .attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")");
 
 		var partition = d3.layout.partition()
 		    .value(function(d) { return d.count; });
@@ -71,7 +71,7 @@ CrimeAPI.prototype.getTally = function() {
 
 	  	var path = svg.selectAll("path")
 	      	.data(partition.nodes(root))
-	    .enter().append("path")
+	    	.enter().append("path")
 	      	.attr("d", arc)
 	      	.attr("data-count", sub_type_count)
 	      	.attr("data-name", sub_type_name)
