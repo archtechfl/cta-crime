@@ -16,6 +16,7 @@
 //= require turbolinks
 //= require underscore
 //= require d3
+//= require mustache
 //= require crimeAPI
 //= require application_init
 //= require_tree .

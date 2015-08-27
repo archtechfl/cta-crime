@@ -1,15 +1,6 @@
 function CrimeAPI () {
 	console.log("new crime API!");
-}
-
-CrimeAPI.prototype.getTally = function() {
-	var getData = $.ajax({
-	    url: 'cta_crime/tally',
-	    type: "GET",
-	    dataType: "json"
-	});
-
-	getData.done( function(response){
+	var organizeData = function (response) {
 		var root = {
 	    	"name": "CTA Crime Tally",
 	    	"children": []
@@ -32,9 +23,22 @@ CrimeAPI.prototype.getTally = function() {
 			});
 			root["children"].push(primary_type_object);
 		});
-		// console.log(root);
-
-	    var width = 960,
+		displayChart(root); // render the table using MustacheJS
+		renderChart(root); // render the SVG chart
+	};
+	// Table display of crime breakdown
+	var displayChart = function (dataBeforeGraph) {
+		var primaryTypes = dataBeforeGraph["children"];
+		// Go through each primary type and add up the sub-type counts
+		_.each(primaryTypes, function (item, index) {
+			_.each(item, function (subitem, subindex) {
+				console.log(subitem);
+			});
+		});
+	};
+	// render the
+	var renderChart = function (root) {
+		var width = 960,
 		    height = 840,
 		    radius = Math.min(width, height) / 2;
 
@@ -97,5 +101,20 @@ CrimeAPI.prototype.getTally = function() {
 		        : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
 		  };
 		}
-	});//end of response
-};
+	};
+	// Get Tally method initiates data request
+	this.getTally = function() {
+		var getData = $.ajax({
+		    url: 'cta_crime/tally',
+		    type: "GET",
+		    dataType: "json"
+		});
+
+		getData.done( function(response){
+			organizeData(response);
+		});//end of response
+	};
+}
+
+
+
