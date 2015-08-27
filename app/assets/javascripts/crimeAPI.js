@@ -32,7 +32,7 @@ CrimeAPI.prototype.getTally = function() {
 			});
 			root["children"].push(primary_type_object);
 		});
-		console.log(root);
+		// console.log(root);
 
 	    var width = 960,
 		    height = 700,
@@ -46,7 +46,7 @@ CrimeAPI.prototype.getTally = function() {
 
 		var color = d3.scale.category20c();
 
-		var svg = d3.select("body").append("svg")
+		var svg = d3.select(".svg-container").append("svg")
 		    .attr("width", width)
 		    .attr("height", height)
 		  .append("g")
@@ -54,6 +54,14 @@ CrimeAPI.prototype.getTally = function() {
 
 		var partition = d3.layout.partition()
 		    .value(function(d) { return d.count; });
+
+		var sub_type_count = function(d){
+			return d.count;
+		};
+
+		var sub_type_name = function(d){
+			return d.name;
+		};
 
 		var arc = d3.svg.arc()
 		    .startAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x))); })
@@ -65,6 +73,8 @@ CrimeAPI.prototype.getTally = function() {
 	      	.data(partition.nodes(root))
 	    .enter().append("path")
 	      	.attr("d", arc)
+	      	.attr("data-count", sub_type_count)
+	      	.attr("data-name", sub_type_name)
 	      	.style("fill", function(d) { return color((d.children ? d : d.parent).name); })
 	      	.on("click", click);
 
