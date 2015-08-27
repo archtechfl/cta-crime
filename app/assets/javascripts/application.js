@@ -14,4 +14,8 @@
 //= require jquery_ujs
 //= require twitter/bootstrap
 //= require turbolinks
+//= require underscore
+//= require d3.min
+//= require crimeAPI
+//= require application_init
 //= require_tree .
