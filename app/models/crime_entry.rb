@@ -7,18 +7,21 @@ class CrimeEntry < ActiveRecord::Base
         response = client.get("qnmj-8ku6", {"$limit" => 10000, "$q" => "CTA"})
         crimes_filtered = CrimeEntry.filter_cta_entries(response)
         sorted_filtered_crimes = crimes_filtered.sort! { |x,y| x["date"] <=> y["date"] }
+        puts Time.now.getutc
         return sorted_filtered_crimes
     end
 
     def self.getCrimeResults()
     	# Simply calls the getData method and returns the results
     	filtered_data = self.getData()
+        puts Time.now.getutc
         return filtered_data
     end
 
     def self.get_tally_breakdown()
     	# Get the crime tally
     	data_to_tally = self.getData()
+        puts Time.now.getutc
     	return self.tally_crimes_including_description(data_to_tally)
     end
 
@@ -34,6 +37,7 @@ class CrimeEntry < ActiveRecord::Base
                     public_crimes.push(crime)
             end
         end
+        puts Time.now.getutc
         return public_crimes
     end
 
@@ -75,6 +79,7 @@ class CrimeEntry < ActiveRecord::Base
 				end
             end
         end
+        puts Time.now.getutc
         return crimes
     end
 
