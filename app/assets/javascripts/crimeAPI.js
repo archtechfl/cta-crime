@@ -67,7 +67,7 @@ function CrimeAPI () {
 		  	.attr('class', 'd3-tip')
 		  	.offset([100, 100])
 		  	.html(function(d) {
-		    	return "<div class='crime-tooltip'><strong>" + d.name + ": </strong> <span style='color:red'>" + d.count + "</span></div>";
+		    	return "<div class='crime-tooltip'><span class='name'>" + d.name + ": </span><span class='count'>" + d.count + "</span></div>";
 		  	});
 
 		var svg = d3.select(".svg-container").append("svg")
