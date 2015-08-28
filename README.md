@@ -23,3 +23,7 @@ Provide an API for accessing data on front end
 #### Phase 5
 
 Create a chart of the data
+
+#### Phase 6
+
+Convert main listing display to a plain old ruby object, remove display logic from model
