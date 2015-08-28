@@ -1,19 +1,20 @@
+<script id="crime_count" type="x-tmpl-mustache">
+	<table class="crime-table table table-striped table-bordered table-hover table-responsive">
+		<tr>
+			<th>Crime Type</th>
+			<th>Count</th>
+		</tr>
+		{{#crimeTable}}
+		<tr>
+			<td>{{name}}</td>
+			<td>{{count}}</td>
+		</tr>
+		{{/crimeTable}}
+	</table>
+</script>
 <div class="container intro">
 	<h1>CTA Crime Analysis using SODA API</h1>
-	<table class="table table-bordered table-striped table-hover">
-		<tbody>
-			<tr>
-				<th>Crime Type</th>
-				<th>Count</th>
-			</tr>
-			<% @tally.each do |crime_count| %>
-				<tr>
-					<td><%= crime_count['type'] %></td>
-					<td><%= crime_count['count'] %></td>
-				</tr>
-			<% end %>
-		</tbody>
-	</table>
+	<div class="crimeCountWrapper"></div>
 	<table class="table table-bordered table-striped table-hover">
 		<tbody>
 			<tr>

@@ -37,11 +37,16 @@ function CrimeAPI () {
 			_.each(item["children"], function (subitem, subindex) {
 				primaryTypeSum += subitem["count"]
 			});
-			primaryTypeSumObject["name"] = subindex;
+			primaryTypeSumObject["name"] = item["name"];
 			primaryTypeSumObject["count"] = primaryTypeSum;
 			dataRenderArray.push(primaryTypeSumObject);
 		});
-		console.log(dataRenderArray);
+		// Sort data according to count
+		var sortedData = dataRenderArray.sort(function(a, b) {
+            return b.count - a.count;
+        });
+		var tableRender = new TableRenderer("crimeTable", "#crime_count", ".crimeCountWrapper");
+		tableRender.renderTable(dataRenderArray);
 	};
 	// render the
 	var renderChart = function (root) {
@@ -57,11 +62,21 @@ function CrimeAPI () {
 
 		var color = d3.scale.category20();
 
+		// Tool tip code
+		var tip = d3.tip()
+		  	.attr('class', 'd3-tip')
+		  	.offset([100, 100])
+		  	.html(function(d) {
+		    	return "<div class='crime-tooltip'><strong>" + d.name + ": </strong> <span style='color:red'>" + d.count + "</span></div>";
+		  	});
+
 		var svg = d3.select(".svg-container").append("svg")
 		    .attr("width", width)
 		    .attr("height", height)
 		  .append("g")
 		    .attr("transform", "translate(" + width / 2 + "," + (height / 2) + ")");
+
+		svg.call(tip); // Tooltip call
 
 		var partition = d3.layout.partition()
 		    .value(function(d) { return d.count; });
@@ -87,7 +102,9 @@ function CrimeAPI () {
 	      	.attr("data-count", sub_type_count)
 	      	.attr("data-name", sub_type_name)
 	      	.style("fill", function(d) { return color((d.children ? d : d.parent).name); })
-	      	.on("click", click);
+	      	.on("click", click)
+	      	.on('mouseover', tip.show)
+      		.on('mouseout', tip.hide);
 
 	  	function click(d) {
 	    	path.transition()

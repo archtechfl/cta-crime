@@ -16,7 +16,9 @@
 //= require turbolinks
 //= require underscore
 //= require d3
+//= require d3-tip
 //= require mustache
+//= require TableRendererWidget
 //= require crimeAPI
 //= require application_init
 //= require_tree .
