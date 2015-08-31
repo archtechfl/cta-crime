@@ -3,12 +3,14 @@ function CrimeAPI () {
 	var organizeData = function (response) {
 		var root = {
 	    	"name": "CTA Crime Tally",
-	    	"children": []
+	    	"children": [],
+	    	"count": 0
 	    };
 		_.each(response, function (item, index){
 			// Create primary type objects
 			var primary_type_object = {};
 			primary_type_object["name"] = index;
+			primary_type_object["count"] = 0;
 			primary_type_object["children"] = [];
 			var sub_type_collection = item["sub_types"];
 			_.each(sub_type_collection, function (sub_item, sub_index){
@@ -19,32 +21,41 @@ function CrimeAPI () {
 					"name": sub_item["name"],
 					"count": sub_item["count"]
 				};
+				primary_type_object["count"] += sub_item["count"];
 				primary_type_object["children"].push(sub_type_object);
 			});
+			/* 
+			TODO: go through the sub-type list and create a new level to contain
+			any sub-types that would be difficult to discern on the graph
+
+			This method should ideally be recursive, so that it makes yet another
+			level if the last level created still has difficult to discern (DOD)
+			sectors on the graph
+			*/
+			// Build up overall crme count
+			root["count"] += primary_type_object["count"]
 			root["children"].push(primary_type_object);
 		});
-		displayChart(root); // render the table using MustacheJS
+		displayTable(root); // render the table using MustacheJS
 		renderChart(root); // render the SVG chart
 	};
 	// Table display of crime breakdown
-	var displayChart = function (dataBeforeGraph) {
+	var displayTable = function (dataBeforeGraph) {
 		var primaryTypes = dataBeforeGraph["children"];
 		// Go through each primary type and add up the sub-type counts
 		var dataRenderArray = [];
+		// reorganize crime data into array of objects representing primary type totals
 		_.each(primaryTypes, function (item, index) {
-			var primaryTypeSum = 0;
 			var primaryTypeSumObject = {};
-			_.each(item["children"], function (subitem, subindex) {
-				primaryTypeSum += subitem["count"]
-			});
 			primaryTypeSumObject["name"] = item["name"];
-			primaryTypeSumObject["count"] = primaryTypeSum;
+			primaryTypeSumObject["count"] = item["count"];
 			dataRenderArray.push(primaryTypeSumObject);
 		});
 		// Sort data according to count
 		var sortedData = dataRenderArray.sort(function(a, b) {
             return b.count - a.count;
         });
+        // render the data table for primary type totals
 		var tableRender = new TableRenderer("crimeTable", "#crime_count", ".crimeCountWrapper");
 		tableRender.renderTable(dataRenderArray);
 	};
@@ -67,7 +78,11 @@ function CrimeAPI () {
 		  	.attr('class', 'd3-tip')
 		  	.offset([100, 100])
 		  	.html(function(d) {
-		    	return "<div class='crime-tooltip'><strong>" + d.name + ": </strong> <span style='color:red'>" + d.count + "</span></div>";
+		  		var string = "<div class='crime-tooltip'><span class='name'>" +
+		  			d.name + ": </span><span class='count'>" +
+		  			d.count +
+		  			"</span></div>";
+		    	return string;
 		  	});
 
 		var svg = d3.select(".svg-container").append("svg")
