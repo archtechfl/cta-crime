@@ -24,6 +24,14 @@ function CrimeAPI () {
 				primary_type_object["count"] += sub_item["count"];
 				primary_type_object["children"].push(sub_type_object);
 			});
+			/* 
+			TODO: go through the sub-type list and create a new level to contain
+			any sub-types that would be difficult to discern on the graph
+
+			This method should ideally be recursive, so that it makes yet another
+			level if the last level created still has difficult to discern (DOD)
+			sectors on the graph
+			*/
 			// Build up overall crme count
 			root["count"] += primary_type_object["count"]
 			root["children"].push(primary_type_object);
