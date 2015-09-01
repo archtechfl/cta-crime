@@ -7,6 +7,11 @@ function CrimeAPI () {
 	    	"children": [],
 	    	"count": 0
 	    };
+	    var rootOriginal = {
+	    	"name": "CTA Crime Tally",
+	    	"children": [],
+	    	"count": 0
+	    };
 		_.each(response, function (item, index){
 			// Create primary type objects
 			var primary_type_object = {};
@@ -36,7 +41,7 @@ function CrimeAPI () {
 			primary_type_object["children"].push(subGroupDivide["secondary"]);
 			// Add the new sub-type group to the sub_type collection
 			// Build up overall crme count
-			root["count"] += primary_type_object["count"]
+			root["count"] += primary_type_object["count"];
 			root["children"].push(primary_type_object);
 		});
 		// Subdivide the primary types based on small portions, place all the 
@@ -59,10 +64,20 @@ function CrimeAPI () {
 		var dataRenderArray = [];
 		// reorganize crime data into array of objects representing primary type totals
 		_.each(primaryTypes, function (item, index) {
-			var primaryTypeSumObject = {};
-			primaryTypeSumObject["name"] = item["name"];
-			primaryTypeSumObject["count"] = item["count"];
-			dataRenderArray.push(primaryTypeSumObject);
+			var name = item["name"];
+			if (name == "OTHER PRIMARY"){
+				_.each(item["children"], function (sub_primary, sub_index){
+					var primaryTypeSumObject = {};
+					primaryTypeSumObject["name"] = sub_primary["name"];
+					primaryTypeSumObject["count"] = sub_primary["count"];
+					dataRenderArray.push(primaryTypeSumObject);
+				});
+			} else {
+				var primaryTypeSumObject = {};
+				primaryTypeSumObject["name"] = item["name"];
+				primaryTypeSumObject["count"] = item["count"];
+				dataRenderArray.push(primaryTypeSumObject);
+			}
 		});
 		// Sort data according to count
 		var sortedData = dataRenderArray.sort(function(a, b) {
