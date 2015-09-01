@@ -1,3 +1,4 @@
+"use strict";
 function CrimeAPI () {
 	console.log("new crime API!");
 	var organizeData = function (response) {
@@ -25,36 +26,14 @@ function CrimeAPI () {
 				primary_type_object["children"].push(sub_type_object);
 			});
 			/* 
-			TODO: go through the sub-type list and create a new level to contain
+			go through the sub-type list and create a new level to contain
 			any sub-types that would be difficult to discern on the graph
-
-			This method should ideally be recursive, so that it makes yet another
-			level if the last level created still has difficult to discern (DOD)
-			sectors on the graph
-
-			UPDATE: recursive is not necessary
 			*/
 			var primaryTypeTotal = primary_type_object["count"];
 			// Consolidate sub types that are small into a larger group
-			var smallBigGroup = _.partition(
-				primary_type_object["children"], 
-				function(sub_type){ return (sub_type["count"] / primaryTypeTotal) <= (6/360); }
-			);
-			// Reorganize data based on small/big pie division
-			var smallGroup = smallBigGroup[0];
-			var largeGroup = smallBigGroup[1];
-			primary_type_object["children"] = largeGroup;
-			var smallGroupSum = 0;
-			_.each(smallGroup, function (smallItem, smallIndex){
-				smallGroupSum += smallItem["count"];
-			})
-			// Create new tree for small sub-types
-			var subTypeGroup = {
-				"name": "OTHER " + index,
-				"children": smallGroup,
-				"count": smallGroupSum
-			};
-			primary_type_object["children"].push(subTypeGroup);
+			var subGroupDivide = subGroup(primary_type_object, primaryTypeTotal);
+			primary_type_object["children"] = subGroupDivide["main"];
+			primary_type_object["children"].push(subGroupDivide["secondary"]);
 			// Add the new sub-type group to the sub_type collection
 			// Build up overall crme count
 			root["count"] += primary_type_object["count"]
@@ -66,25 +45,9 @@ function CrimeAPI () {
 		TODO: refactor this and the sub_type partition into a single method that
 		can be reused
 		*/
-		var primaryParition = _.partition(
-			root["children"], 
-			function(primary_type){ return (primary_type["count"] / root["count"]) <= (6/360); }
-		);
-		// Reorganize data based on small/big pie division
-		var smallPrimary = primaryParition[0];
-		var largePrimary = primaryParition[1];
-		root["children"] = largePrimary;
-		var smallPrimarySum = 0;
-		_.each(smallPrimary, function (primaryItem, primaryIndex){
-			smallPrimarySum += primaryItem["count"];
-		})
-		// Create new tree for small sub-types
-		var smallPrimaryGroup = {
-			"name": "OTHER PRIMARY",
-			"children": smallPrimary,
-			"count": smallPrimarySum
-		};
-		root["children"].push(smallPrimaryGroup);
+		var primaryDivide = subGroup(root, root["count"]);
+		root["children"] = primaryDivide["main"];
+		root["children"].push(primaryDivide["secondary"]);
 		// Display calls for table and D3 chart
 		displayTable(root); // render the table using MustacheJS
 		renderChart(root); // render the SVG chart
@@ -108,6 +71,41 @@ function CrimeAPI () {
         // render the data table for primary type totals
 		var tableRender = new TableRenderer("crimeTable", "#crime_count", ".crimeCountWrapper");
 		tableRender.renderTable(dataRenderArray);
+	};
+	// Create a new sub-group
+	var subGroup = function (group, total) {
+		var parent = group;
+		var children = group["children"];
+		var partition = _.partition(
+			children, 
+			function(type){ 
+				return (type["count"] / total) <= (6/360); 
+			}
+		);
+		// Reorganize data based on small/big pie division
+		var smallPartition = partition[0];
+		var largePartition = partition[1];
+		var smallSum = 0;
+		_.each(smallPartition, function (smallItem, smallIndex){
+			smallSum += smallItem["count"];
+		})
+		// label for new group
+		var groupLabel = "";
+		if (group["name"] != "CTA Crime Tally"){
+			groupLabel = group["name"];
+		} else {
+			groupLabel = "PRIMARY";
+		}
+		// Create new tree for small sub-types
+		var smallGroup = {
+			"name": "OTHER " + groupLabel,
+			"children": smallPartition,
+			"count": smallSum
+		};
+		return {
+			"main": largePartition,
+			"secondary": smallGroup
+		}
 	};
 	// render the
 	var renderChart = function (root) {
@@ -144,7 +142,9 @@ function CrimeAPI () {
 		svg.call(tip); // Tooltip call
 
 		var partition = d3.layout.partition()
-		    .value(function(d) { return d.count; });
+		    .value(function(d) {
+		    	return d.count; 
+		    });
 
 		var sub_type_count = function(d){
 			return d.count;
@@ -191,19 +191,16 @@ function CrimeAPI () {
 
 		// Interpolate the scales!
 		function arcTween(d, clickedItem) {
+			console.log(clickedItem);
 		 	var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
 		      	yd = d3.interpolate(y.domain(), [d.y, 1]),
 		      	yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
 		  		return function(d, i) {
 				    return i
 				        ? function(t) {
-				        	//console.log(t);
-				        	console.log(d.parent.name);
 				        	return arc(d);
 				        }
 				        : function(t) {
-				        	//console.log(t);
-				        	console.log(d.name);
 				        	x.domain(xd(t));
 				        	y.domain(yd(t)).range(yr(t));
 				        	return arc(d);
