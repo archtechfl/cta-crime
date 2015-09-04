@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
+  get 'cta_crime/visualize'
+  get 'cta_crime/tally'
   get 'cta_crime/index'
-
   get 'welcome/index'
 
   # The priority is based upon order of creation: first created -> highest priority.
@@ -11,7 +12,6 @@ Rails.application.routes.draw do
 
   # for cta_crime api call, route to index method
   get 'cta_crime' => 'cta_crime#index'
-  get 'cta_crime/tally' => 'cta_crime#tally'
 
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase

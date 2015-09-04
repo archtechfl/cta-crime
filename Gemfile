@@ -47,3 +47,7 @@ gem "twitter-bootstrap-rails"
 # SODA
 
 gem 'soda-ruby', :require => 'soda'
+
+# Nokogirl
+
+gem 'nokogirl'
